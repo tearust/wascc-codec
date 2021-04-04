@@ -20,6 +20,12 @@ pub struct WriteLogRequest {
     pub level: u32,
     /// A string that represents the body of the log message
     pub body: String,
+    /// The line containing the message
+    pub line: u32,
+    /// The source file containing the message
+    pub file: String,
+    /// The name of the target of the directive
+    pub target: String,
 }
 
 impl Sample for WriteLogRequest {
@@ -27,6 +33,9 @@ impl Sample for WriteLogRequest {
         WriteLogRequest {
             level: 4,
             body: "This is a debug message".to_string(),
+            line: 30,
+            file: "lib.rs".to_string(),
+            target: "wascc_codec".to_string(),
         }
     }
 }
