@@ -6,6 +6,7 @@ use crate::Sample;
 
 /// An operation to request a log write
 pub const OP_LOG: &str = "WriteLog";
+pub const ACTOR_LOG_FLAG: &str = "[ActorLog]";
 
 /// Represents a request to write a log entry. Use this type of log entry if you are
 /// pulling or aggregating logs on a per-actor basis from the host. If you just need
