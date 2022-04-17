@@ -46,7 +46,7 @@ struct ValidateCommand {
     path: String,
 }
 
-fn main() -> Result<(), Box<dyn ::std::error::Error>> {
+fn main() -> anyhow::Result<()> {
     let args = Cli::from_args();
     let cmd = args.command;
 
@@ -59,14 +59,14 @@ fn main() -> Result<(), Box<dyn ::std::error::Error>> {
     Ok(())
 }
 
-fn handle_command(cmd: CliCommand) -> Result<(), Box<dyn ::std::error::Error>> {
+fn handle_command(cmd: CliCommand) -> anyhow::Result<()> {
     match cmd {
         CliCommand::Validate(valcmd) => validate_file(&valcmd),
         CliCommand::Generate(gencmd) => generate_file(&gencmd),
     }
 }
 
-fn generate_file(cmd: &GenerateCommand) -> Result<(), Box<dyn ::std::error::Error>> {
+fn generate_file(cmd: &GenerateCommand) -> anyhow::Result<()> {
     let output = json!({
         "version" : codec::VERSION,
         "httpserver": generate_httpserver_sample(),
@@ -83,7 +83,7 @@ fn generate_file(cmd: &GenerateCommand) -> Result<(), Box<dyn ::std::error::Erro
     Ok(())
 }
 
-fn validate_file(cmd: &ValidateCommand) -> Result<(), Box<dyn ::std::error::Error>> {
+fn validate_file(cmd: &ValidateCommand) -> anyhow::Result<()> {
     let mut f = File::open(&cmd.path)?;
     let mut buffer = Vec::new();
 
@@ -133,52 +133,52 @@ fn validate_file(cmd: &ValidateCommand) -> Result<(), Box<dyn ::std::error::Erro
 
 fn generate_httpserver_sample() -> serde_json::Value {
     json!({
-        "request": base64::encode(codec::serialize(codec::http::Request::sample()).unwrap()),
-        "response": base64::encode(codec::serialize(codec::http::Response::sample()).unwrap())
+        "request": base64::encode(codec::serialize(&codec::http::Request::sample()).unwrap()),
+        "response": base64::encode(codec::serialize(&codec::http::Response::sample()).unwrap())
     })
 }
 
 fn generate_keyvalue_sample() -> serde_json::Value {
     json!({
-        "setrequest": base64::encode(codec::serialize(codec::keyvalue::SetRequest::sample()).unwrap())
+        "setrequest": base64::encode(codec::serialize(&codec::keyvalue::SetRequest::sample()).unwrap())
     })
 }
 
 fn generate_blobstore_sample() -> serde_json::Value {
     json!({
-        "filechunk": base64::encode(codec::serialize(codec::blobstore::FileChunk::sample()).unwrap()),
-        "containerlist": base64::encode(codec::serialize(codec::blobstore::ContainerList::sample()).unwrap())
+        "filechunk": base64::encode(codec::serialize(&codec::blobstore::FileChunk::sample()).unwrap()),
+        "containerlist": base64::encode(codec::serialize(&codec::blobstore::ContainerList::sample()).unwrap())
     })
 }
 
 fn generate_messaging_sample() -> serde_json::Value {
     json!({
-        "requestmessage": base64::encode(codec::serialize(codec::messaging::RequestMessage::sample()).unwrap())
+        "requestmessage": base64::encode(codec::serialize(&codec::messaging::RequestMessage::sample()).unwrap())
     })
 }
 
 fn generate_extras_sample() -> serde_json::Value {
     json!({
-        "result_guid": base64::encode(codec::serialize(codec::extras::GeneratorResult::sample()).unwrap()),
+        "result_guid": base64::encode(codec::serialize(&codec::extras::GeneratorResult::sample()).unwrap()),
     })
 }
 
 fn generate_logging_sample() -> serde_json::Value {
     json!({
-        "writelogrequest": base64::encode(codec::serialize(codec::logging::WriteLogRequest::sample()).unwrap()),
+        "writelogrequest": base64::encode(codec::serialize(&codec::logging::WriteLogRequest::sample()).unwrap()),
     })
 }
 
 fn generate_eventstreams_sample() -> serde_json::Value {
     json!({
-        "streamquery": base64::encode(codec::serialize(codec::eventstreams::StreamQuery::sample()).unwrap())
+        "streamquery": base64::encode(codec::serialize(&codec::eventstreams::StreamQuery::sample()).unwrap())
     })
 }
 
 fn assert<'de, T: Deserialize<'de> + PartialEq + std::fmt::Debug>(
     value: &serde_json::Value,
     expected: T,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> anyhow::Result<()> {
     let encoded = value.to_string().replace("\"", "");
     let bytes = base64::decode(&encoded)?;
 
