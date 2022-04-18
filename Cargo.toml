@@ -30,7 +30,8 @@ version = "0.4.8"
 features = ["std", "serde"]
 
 [dependencies.tea-codec]
-path = "../tea-codec"
+git = "https://github.com/tearust/tea-codec"
+branch = "dev"
 
 [dependencies.thiserror]
 version = "1.0.22"
