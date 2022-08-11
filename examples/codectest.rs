@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::de::DeserializeOwned;
 use std::fs::File;
 use std::io::Read;
 use std::io::Write;
@@ -176,7 +176,7 @@ fn generate_eventstreams_sample() -> serde_json::Value {
 	})
 }
 
-fn assert<'de, T: Deserialize<'de> + PartialEq + std::fmt::Debug>(
+fn assert<T: DeserializeOwned + PartialEq + std::fmt::Debug>(
 	value: &serde_json::Value,
 	expected: T,
 ) -> TeaResult<()> {
