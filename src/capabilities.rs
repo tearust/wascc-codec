@@ -14,8 +14,8 @@
 
 //! # Common types used for managing native capability providers
 
+use crate::error::Result;
 use std::any::Any;
-use tea_codec::error::TeaResult;
 
 /// All capability providers must respond to this operation, which will be requested by
 /// the host (the `system` actor)
@@ -24,7 +24,7 @@ pub const OP_GET_CAPABILITY_DESCRIPTOR: &str = "GetCapabilityDescriptor";
 /// The dispatcher is used by a native capability provider to send commands to an actor module, expecting
 /// a result containing a byte array in return
 pub trait Dispatcher: Any + Send + Sync {
-	fn dispatch(&self, actor: &str, op: &str, msg: &[u8]) -> TeaResult<Vec<u8>>;
+	fn dispatch(&self, actor: &str, op: &str, msg: &[u8]) -> Result<Vec<u8>>;
 }
 
 /// Metadata describing the capability provider and the operations it supports
@@ -177,7 +177,7 @@ impl NullDispatcher {
 }
 
 impl Dispatcher for NullDispatcher {
-	fn dispatch(&self, _actor: &str, _op: &str, _msg: &[u8]) -> TeaResult<Vec<u8>> {
+	fn dispatch(&self, _actor: &str, _op: &str, _msg: &[u8]) -> Result<Vec<u8>> {
 		unimplemented!()
 	}
 }
@@ -187,9 +187,9 @@ impl Dispatcher for NullDispatcher {
 pub trait CapabilityProvider: Any + Send + Sync {
 	/// This function will be called on the provider when the host runtime is ready and has configured a dispatcher. This function is only ever
 	/// called _once_ for a capability provider, regardless of the number of actors being managed in the host
-	fn configure_dispatch(&self, dispatcher: Box<dyn Dispatcher>) -> TeaResult<()>;
+	fn configure_dispatch(&self, dispatcher: Box<dyn Dispatcher>) -> Result<()>;
 	/// Invoked when an actor has requested that a provider perform a given operation
-	fn handle_call(&self, actor: &str, op: &str, msg: &[u8]) -> TeaResult<Vec<u8>>;
+	fn handle_call(&self, actor: &str, op: &str, msg: &[u8]) -> Result<Vec<u8>>;
 }
 
 /// Wraps a constructor inside an FFI function to allow the `CapabilityProvider` trait implementation

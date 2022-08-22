@@ -18,6 +18,9 @@
 //! This library provides the core set of types and associated functions used to facilitate actor
 //! and host runtime communication for waSCC.
 
+#![feature(generic_associated_types)]
+#![feature(min_specialization)]
+
 /// The version of the codec as seen on crates.io
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 /// The string used for the originator of messages dispatched by the host runtime
@@ -36,6 +39,7 @@ pub trait Sample {
 pub mod blobstore;
 pub mod capabilities;
 pub mod core;
+pub mod error;
 pub mod eventstreams;
 pub mod extras;
 pub mod http;
