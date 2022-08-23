@@ -4,7 +4,7 @@ use std::io::Read;
 use std::io::Write;
 use structopt::clap::AppSettings;
 use structopt::StructOpt;
-use tea_codec::error::TeaResult;
+use wascc_codec::error::Result;
 
 #[macro_use]
 extern crate serde_json;
@@ -47,7 +47,7 @@ struct ValidateCommand {
 	path: String,
 }
 
-fn main() -> TeaResult<()> {
+fn main() -> Result<()> {
 	let args = Cli::from_args();
 	let cmd = args.command;
 
@@ -60,14 +60,14 @@ fn main() -> TeaResult<()> {
 	Ok(())
 }
 
-fn handle_command(cmd: CliCommand) -> TeaResult<()> {
+fn handle_command(cmd: CliCommand) -> Result<()> {
 	match cmd {
 		CliCommand::Validate(valcmd) => validate_file(&valcmd),
 		CliCommand::Generate(gencmd) => generate_file(&gencmd),
 	}
 }
 
-fn generate_file(cmd: &GenerateCommand) -> TeaResult<()> {
+fn generate_file(cmd: &GenerateCommand) -> Result<()> {
 	let output = json!({
 		"version" : codec::VERSION,
 		"httpserver": generate_httpserver_sample(),
@@ -84,7 +84,7 @@ fn generate_file(cmd: &GenerateCommand) -> TeaResult<()> {
 	Ok(())
 }
 
-fn validate_file(cmd: &ValidateCommand) -> TeaResult<()> {
+fn validate_file(cmd: &ValidateCommand) -> Result<()> {
 	let mut f = File::open(&cmd.path)?;
 	let mut buffer = Vec::new();
 
@@ -179,7 +179,7 @@ fn generate_eventstreams_sample() -> serde_json::Value {
 fn assert<T: DeserializeOwned + PartialEq + std::fmt::Debug>(
 	value: &serde_json::Value,
 	expected: T,
-) -> TeaResult<()> {
+) -> Result<()> {
 	let encoded = value.to_string().replace("\"", "");
 	let bytes = base64::decode(&encoded)?;
 
